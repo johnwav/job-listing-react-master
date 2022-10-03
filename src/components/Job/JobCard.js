@@ -1,8 +1,9 @@
 import React from 'react';
 import { Box, Grid, Typography, Button, makeStyles } from '@material-ui/core'
 import theme from '../../theme/theme';
+import { differenceInMinutes } from 'date-fns'
 
-const skills = ["Javascript", "React.js", "Node.js"]
+
 
 const useStyles = makeStyles(() => ({
     wrapper: {
@@ -44,20 +45,22 @@ export default props => {
             <Grid container alignItems='center'>
                 <Grid item xs>
                     <Typography
-                        variant='subtitle1' >
-                        Frontend dev</Typography>
+                        variant='subtitle1'>
+                        {props.title}
+                    </Typography>
                     <Typography
                         className={classes.comapanyName}
                         variant='subtitle2'>
-                        Google</Typography>
+                        {props.companyName}
+                    </Typography>
                 </Grid >
 
-                <Grid 
-                item container xs>
-       
-                    {skills.map(skill => (
-                        <Grid key={skill} item          
-                        className={classes.skillChip}>
+                <Grid
+                    item container xs>
+
+                    {props.skills.map(skill => (
+                        <Grid key={skill} item
+                            className={classes.skillChip}>
                             {skill}
                         </Grid>
                     ))}
@@ -66,7 +69,7 @@ export default props => {
                 <Grid item container direction='column' alignItems='flex-end' xs>
                     <Grid item>
                         <Typography variant='caption'>
-                            2577 min ago | fulltime | Remote
+                            {differenceInMinutes(Date.now(), props.postedOn)} min ago | {props.type} | {props.location}
                         </Typography>
                     </Grid>
                     <Grid item>
