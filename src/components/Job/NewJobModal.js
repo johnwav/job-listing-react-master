@@ -12,7 +12,8 @@ import {
     Typography,
     makeStyles,
     Button,
-    IconButton
+    IconButton,
+    CircularProgress
 } from '@material-ui/core'
 
 import { Close as CloseIcon } from '@material-ui/icons'
@@ -28,7 +29,6 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 600,
         border: `1px solid ${theme.palette.secondary.main}`,
         color: theme.palette.secondary.main,
-        cursor: "pointer",
 
         "&:hover": {
             backgroundColor: theme.palette.secondary.main,
@@ -42,20 +42,22 @@ const useStyles = makeStyles(theme => ({
 }))
 
 
+const initState = {
+    companyName: "",
+    companyUrl: "",
+    link: "",
+    location: "Remote",
+    skills: [],
+    title: "",
+    type: "Full time",
+    description: ""
+}
 
 
 export default props => {
+    const [loading, setLoading] = useState(false)
 
-    const [jobDetails, setJobDetails] = useState({
-        companyName: "",
-        companyUrl: "",
-        link: "",
-        location: "Remote",
-        skills: [],
-        title: "",
-        type: "Full time",
-        description: ""
-    })
+    const [jobDetails, setJobDetails] = useState(initState)
 
     const handleChange = (e) => {
         e.persist();
@@ -75,7 +77,19 @@ export default props => {
             ...oldState,
             skills: oldState.skills.concat(skill)
         }))
-    // adding
+
+    const handleSubmit = async () => {
+        setLoading(true);
+        await props.postJob(jobDetails);
+        closeModal();
+    }
+
+    const closeModal = () => {
+        setJobDetails(initState);
+        setLoading(false);
+        props.closeModal();
+    }
+
 
 
     const classes = useStyles()
@@ -91,14 +105,18 @@ export default props => {
     console.log(jobDetails)
 
     return (
-        <Dialog open={true} fullWidth>
+        <Dialog open={props.newJobModal} fullWidth>
             <DialogTitle>
-                <Box display="flex"
+                <Box
+
+                    display="flex"
                     justifyContent='space-between'
                     alignItems='center'>
                     Post job
-                    <IconButton>
-                        <CloseIcon></CloseIcon>
+                    <IconButton  onClick={closeModal}>
+                        <CloseIcon>
+
+                        </CloseIcon>
                     </IconButton>
                 </Box>
             </DialogTitle>
@@ -209,10 +227,20 @@ export default props => {
                     justifyContent='space-between'
                     alignItems='center'>
                     <Typography>*Required Feilds</Typography>
-                    <Button variant="contained"
+                    <Button
+                        onClick={handleSubmit}
+                        variant="contained"
                         disableElevation
                         color="primary"
-                    >Post a Job</Button>
+                        disabled={loading}
+                    >
+                        {loading ? (<CircularProgress color='secondary' size={22}>
+
+                        </CircularProgress>)
+                            :
+                            ("Post a Job")
+                        }
+                    </Button>
                 </Box>
             </DialogActions>
         </Dialog>
